@@ -63,7 +63,17 @@ const CHART_COLORS = {
   primary: "hsl(var(--chart-1))",
   accent: "hsl(var(--chart-2))",
   tertiary: "hsl(var(--chart-3))",
+  quaternary: "hsl(var(--chart-4))",
+  quinary: "hsl(var(--chart-5))",
 }
+
+const BAR_PALETTE = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+]
 
 export function CompoundInterestCalculator() {
   const [principal, setPrincipal] = useState<number>(10_000_000)
@@ -115,7 +125,7 @@ export function CompoundInterestCalculator() {
     }
 
     const pieData = [
-      { name: "Эхний хөрөнгө", value: P, color: CHART_COLORS.tertiary },
+      { name: "Эхний хөрөнгө", value: P, color: CHART_COLORS.quaternary },
       { name: "Сар бүрийн хуримтлал", value: PMT * 12 * t, color: CHART_COLORS.accent },
       { name: "Хүүгийн орлого", value: Math.round(totalInterest), color: CHART_COLORS.primary },
     ]
@@ -409,12 +419,17 @@ export function CompoundInterestCalculator() {
                         <AreaChart data={calculations.yearlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                           <defs>
                             <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor={CHART_COLORS.primary} stopOpacity={0.4} />
+                              <stop offset="0%" stopColor={CHART_COLORS.primary} stopOpacity={0.5} />
+                              <stop offset="50%" stopColor={CHART_COLORS.quinary} stopOpacity={0.3} />
                               <stop offset="100%" stopColor={CHART_COLORS.primary} stopOpacity={0.05} />
                             </linearGradient>
                             <linearGradient id="colorContrib" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor={CHART_COLORS.accent} stopOpacity={0.4} />
+                              <stop offset="0%" stopColor={CHART_COLORS.accent} stopOpacity={0.5} />
                               <stop offset="100%" stopColor={CHART_COLORS.accent} stopOpacity={0.05} />
+                            </linearGradient>
+                            <linearGradient id="colorInterest" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={CHART_COLORS.tertiary} stopOpacity={0.5} />
+                              <stop offset="100%" stopColor={CHART_COLORS.tertiary} stopOpacity={0.05} />
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.5} />
@@ -451,10 +466,19 @@ export function CompoundInterestCalculator() {
                             animationDuration={1000}
                             animationEasing="ease-out"
                           />
+                          <Area
+                            type="monotone"
+                            dataKey="interest"
+                            stroke={CHART_COLORS.tertiary}
+                            strokeWidth={2}
+                            fill="url(#colorInterest)"
+                            animationDuration={1000}
+                            animationEasing="ease-out"
+                          />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="mt-4 flex items-center justify-center gap-6 text-sm">
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm">
                       <div className="flex items-center gap-2">
                         <div className="h-3 w-3 rounded-full" style={{ backgroundColor: CHART_COLORS.primary }} />
                         <span className="text-muted-foreground">Нийт хуримтлал</span>
@@ -462,6 +486,10 @@ export function CompoundInterestCalculator() {
                       <div className="flex items-center gap-2">
                         <div className="h-3 w-3 rounded-full" style={{ backgroundColor: CHART_COLORS.accent }} />
                         <span className="text-muted-foreground">Оруулсан мөнгө</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: CHART_COLORS.tertiary }} />
+                        <span className="text-muted-foreground">Хүүгийн орлого</span>
                       </div>
                     </div>
                   </TabsContent>
@@ -487,10 +515,13 @@ export function CompoundInterestCalculator() {
                           <Tooltip content={<CustomTooltip />} />
                           <Bar
                             dataKey="contributions"
-                            fill={CHART_COLORS.accent}
-                            opacity={0.3}
                             radius={[4, 4, 0, 0]}
-                          />
+                            opacity={0.55}
+                          >
+                            {calculations.yearlyData.map((_, index) => (
+                              <Cell key={`bar-cell-${index}`} fill={BAR_PALETTE[index % BAR_PALETTE.length]} />
+                            ))}
+                          </Bar>
                           <Line
                             type="monotone"
                             dataKey="totalValue"
@@ -505,9 +536,8 @@ export function CompoundInterestCalculator() {
                             type="monotone"
                             dataKey="interest"
                             stroke={CHART_COLORS.tertiary}
-                            strokeWidth={2}
-                            strokeDasharray="5 5"
-                            dot={false}
+                            strokeWidth={2.5}
+                            dot={{ fill: CHART_COLORS.tertiary, strokeWidth: 0, r: 3 }}
                             animationDuration={1200}
                             animationEasing="ease-out"
                           />
@@ -520,11 +550,15 @@ export function CompoundInterestCalculator() {
                         <span className="text-muted-foreground">Нийт хуримтлал</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="h-3 w-3 rounded-full opacity-30" style={{ backgroundColor: CHART_COLORS.accent }} />
+                        <div className="flex h-3 w-12 overflow-hidden rounded-full opacity-70">
+                          {BAR_PALETTE.map((c, i) => (
+                            <div key={i} className="flex-1" style={{ backgroundColor: c }} />
+                          ))}
+                        </div>
                         <span className="text-muted-foreground">Оруулсан</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="h-0.5 w-4" style={{ backgroundColor: CHART_COLORS.tertiary, borderStyle: "dashed" }} />
+                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: CHART_COLORS.tertiary }} />
                         <span className="text-muted-foreground">Хүүгийн орлого</span>
                       </div>
                     </div>

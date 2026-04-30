@@ -50,10 +50,18 @@ const sampleGrowthData = [
   { year: "30", value: 318600000 },
 ]
 
+const BAR_PALETTE = [
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+]
+
 const breakdownData = [
-  { name: "Эхний хөрөнгө", value: 1000000, color: "hsl(var(--chart-1))" },
+  { name: "Эхний хөрөнгө", value: 1000000, color: "hsl(var(--chart-4))" },
   { name: "Хуримтлал", value: 36000000, color: "hsl(var(--chart-2))" },
-  { name: "Хүү", value: 281600000, color: "hsl(var(--chart-3))" },
+  { name: "Хүү", value: 281600000, color: "hsl(var(--chart-1))" },
 ]
 
 const comparisonData = [
@@ -310,8 +318,15 @@ export function ProjectPresentation() {
                 <AreaChart data={sampleGrowthData}>
                   <defs>
                     <linearGradient id="presentationGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <stop offset="0%" stopColor="hsl(var(--chart-1))" stopOpacity={0.55} />
+                      <stop offset="35%" stopColor="hsl(var(--chart-4))" stopOpacity={0.4} />
+                      <stop offset="70%" stopColor="hsl(var(--chart-2))" stopOpacity={0.25} />
+                      <stop offset="100%" stopColor="hsl(var(--chart-3))" stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="presentationStroke" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="hsl(var(--chart-1))" />
+                      <stop offset="50%" stopColor="hsl(var(--chart-4))" />
+                      <stop offset="100%" stopColor="hsl(var(--chart-2))" />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.4} />
@@ -343,9 +358,11 @@ export function ProjectPresentation() {
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="hsl(var(--primary))"
+                    stroke="url(#presentationStroke)"
                     strokeWidth={3}
                     fill="url(#presentationGradient)"
+                    dot={{ r: 5, strokeWidth: 2, stroke: "hsl(var(--background))", fill: "hsl(var(--chart-1))" }}
+                    activeDot={{ r: 7, strokeWidth: 2, stroke: "hsl(var(--background))" }}
                     animationDuration={1200}
                     animationEasing="ease-out"
                   />
@@ -490,8 +507,23 @@ export function ProjectPresentation() {
                     }}
                     formatter={(value: number) => `${value}%`}
                   />
-                  <Bar dataKey="traditional" fill="hsl(var(--muted-foreground))" radius={[6, 6, 0, 0]} name="Энгийн хүү" />
-                  <Bar dataKey="compound" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} name="Нийлмэл хүү" />
+                  <Bar dataKey="traditional" radius={[6, 6, 0, 0]} name="Энгийн хүү">
+                    {comparisonData.map((_, index) => (
+                      <Cell
+                        key={`trad-${index}`}
+                        fill={BAR_PALETTE[index % BAR_PALETTE.length]}
+                        fillOpacity={0.4}
+                      />
+                    ))}
+                  </Bar>
+                  <Bar dataKey="compound" radius={[6, 6, 0, 0]} name="Нийлмэл хүү">
+                    {comparisonData.map((_, index) => (
+                      <Cell
+                        key={`comp-${index}`}
+                        fill={BAR_PALETTE[index % BAR_PALETTE.length]}
+                      />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
