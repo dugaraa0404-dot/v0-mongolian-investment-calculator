@@ -8,7 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, Wallet, Calendar, Percent, Building2, CircleDollarSign, ArrowUpRight, Info, LineChart as LineChartIcon, PieChartIcon, BarChart3 } from "lucide-react"
+import { TrendingUp, Wallet, Calendar, Percent, Building2, CircleDollarSign, ArrowUpRight, Info, LineChart as LineChartIcon, PieChartIcon, BarChart3, Presentation } from "lucide-react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import {
   AreaChart,
   Area,
@@ -169,10 +171,18 @@ export function CompoundInterestCalculator() {
                 <p className="text-sm text-muted-foreground">Хуримтлалын өсөлтийг тооцоолох</p>
               </div>
             </div>
-            <Badge variant="secondary" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5">
-              <CircleDollarSign className="h-3.5 w-3.5" />
-              <span>Монгол төгрөг</span>
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm" className="h-9 bg-transparent">
+                <Link href="/presentation">
+                  <Presentation className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Танилцуулга</span>
+                </Link>
+              </Button>
+              <Badge variant="secondary" className="hidden md:flex items-center gap-1.5 px-3 py-1.5">
+                <CircleDollarSign className="h-3.5 w-3.5" />
+                <span>Монгол төгрөг</span>
+              </Badge>
+            </div>
           </div>
         </div>
       </header>
